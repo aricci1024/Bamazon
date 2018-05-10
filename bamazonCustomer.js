@@ -66,16 +66,10 @@ function userPurchase () {
                     console.log("Your order of "+ res[i].stock_quantity + " " + res[i].product_name + " is now being processed.");
                     console.log("Your credit card will be charged " + res[i].stock_quantity*res[i].price)
                     console.log("Thank you for your order!")
-                    connection.query("UPDATE products SET ? WHERE ?", [{
-                        StockQuantity: res[i].stock_quantity - quantRequest
-                    }, 
-                    {
-                        id: res[chosenId].id
-                    }], 
+                    connection.query("UPDATE products SET ? WHERE ?", [{StockQuantity: res[i].stock_quantity - quantRequest}, {id: res[chosenId].id}], 
                     function(err, res) {
                         queryAllItems();
                     });
-    
                 }
             } else {
                 console.log("Insufficient quantity!");
