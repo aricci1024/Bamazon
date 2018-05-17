@@ -40,4 +40,4 @@ Node.js and MySQL Amazon-like storefront
 
 See example below:
 
-![Alt text](example_img.jpg?raw=true "Example of Bamazon")
+![Alt text](example_img.png?raw=true "Example of Bamazon")
