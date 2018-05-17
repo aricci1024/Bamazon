@@ -23,6 +23,7 @@ connection.connect(function(err) {
 
 function queryAllItems() {
     connection.query("SELECT * FROM products", function(err, res) {
+        console.log("-----------------------------------");
         console.log("See store products below: ")
         for (var i = 0; i < res.length; i++) {
             console.log("Item ID: " + res[i].item_id + " | Product Name: " + res[i].product_name + " | Department: " + res[i].department_name + " | Unit price: " + res[i].price + " | Quantity in stock: " + res[i].stock_quantity);
@@ -35,7 +36,7 @@ function queryAllItems() {
 function userPurchase () {
     inquirer.prompt([
         {
-            name: "item_id",
+            name: "Item",
             type: "input",
             message: "Enter the ID of the item you'd like to purchase",
             validate: function(value) {
@@ -58,23 +59,43 @@ function userPurchase () {
         }
     ])
     .then(function(answer) {
-        console.log("Item selected: " + input.item_id + "Quantity selected: " + input.quantRequest)
-        var query = 'SELECT * FROM Products WHERE itemID=' + answer.item_id;
-        connection.query(query, function(err, res) {
-            if (answer.Quantity <= res) {
-                for (var i = 0; i < res.length; i++) {
-                    console.log("Your order of "+ res[i].stock_quantity + " " + res[i].product_name + " is now being processed.");
-                    console.log("Your credit card will be charged " + res[i].stock_quantity*res[i].price)
-                    console.log("Thank you for your order!")
-                    connection.query("UPDATE products SET ? WHERE ?", [{StockQuantity: res[i].stock_quantity - quantRequest}, {id: res[chosenId].id}], 
-                    function(err, res) {
-                        queryAllItems();
-                    });
-                }
+        //select the product
+        connection.query('SELECT * FROM Products WHERE ?', [{item_id: answer.Item}], function(err, data) {
+            if (err) throw err;
+            //if item doesnt have enough in stock
+            if (data[0].stock_quantity < parseInt(answer.quantRequest)) {
+                console.log("Insufficient quantity! That product is out of stock \nPlease select another product.");
+                queryAllItems();
             } else {
-                console.log("Insufficient quantity!");
-            }
-            queryAllItems();
-        })
+                //vars for updating
+                var updateQuant = data[0].stock_quantity - parseInt(answer.quantRequest);
+                var totalPrice = data[0].price * parseInt(answer.quantRequest);
+                //update database with new quant
+                connection.query('UPDATE products SET stock_quantity = ? WHERE item_id = ?', [updateQuant, answer.Item], function(err, results) {
+                    if(err) {
+                        throw err;
+                    } else {
+                        //show user amount they will be charged for their purchase
+                        console.log("Your order has been processed!");
+                        console.log("Your card will be charged: $ " + totalPrice);
+                        //ask if they want to buy anything else
+                        inquirer.prompt({
+                            name: "addPurchase",
+                            type: "confirm",
+                            message: "WOuld you like to purchase something else?",
+                        }).then(function(answer) {
+                            // if yes display product list
+                            if (answer.addPurchase === true) {
+                                queryAllItems();
+                            } else {
+                                // if no, terminate connection
+                                console.log("Thank your for shopping with Bamazon!");
+                                connection.end();
+                            };
+                        });
+                    };
+                });
+            };
+        });
     });
-}
+};
