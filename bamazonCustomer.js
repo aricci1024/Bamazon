@@ -10,7 +10,7 @@ var connection = mysql.createConnection({
     user: "root",
 
     // Your password
-    password: "",
+    password: "V1E2r3n45!",
     database: "Bamazon"
 });
 
@@ -77,12 +77,12 @@ function userPurchase () {
                     } else {
                         //show user amount they will be charged for their purchase
                         console.log("Your order has been processed!");
-                        console.log("Your card will be charged: $ " + totalPrice);
+                        console.log("Your card will be charged: $" + totalPrice);
                         //ask if they want to buy anything else
                         inquirer.prompt({
                             name: "addPurchase",
                             type: "confirm",
-                            message: "WOuld you like to purchase something else?",
+                            message: "Would you like to purchase something else?",
                         }).then(function(answer) {
                             // if yes display product list
                             if (answer.addPurchase === true) {

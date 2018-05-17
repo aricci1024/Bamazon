@@ -14,7 +14,7 @@ CREATE TABLE products (
 
 -- Insert data into the 'products' table --
 INSERT INTO products (product_name, department_name, price, stock_quantity)
-VALUES ('Dove Shampoo', 'Cosmetics', 5.75, 350);
+VALUES ('Head and Shoulders Shampoo', 'Cosmetics', 6.75, 350);
 
 INSERT INTO products (product_name, department_name, price, stock_quantity)
 VALUES ('Golden State Warriors T-Shirt', 'Clothing', 19.99, 300);
